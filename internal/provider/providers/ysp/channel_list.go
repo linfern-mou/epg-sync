@@ -323,7 +323,7 @@ var channelList = []*model.ProviderChannel{
 	{
 		ID:      "600084781",
 		Name:    "CGTN外语纪录",
-		Aliases: []string{"CGTN记录"},
+		Aliases: []string{"CGTN纪录"},
 	},
 	{
 		ID:   "600193252",
