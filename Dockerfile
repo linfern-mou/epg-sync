@@ -18,7 +18,7 @@ WORKDIR /web
 
 RUN npm install -g pnpm
 
-COPY web/package.json web/pnpm-lock.yaml ./
+COPY web/package.json web/pnpm-lock.yaml web/pnpm-workspace.yaml ./
 RUN pnpm install --frozen-lockfile
 
 COPY web/ .
