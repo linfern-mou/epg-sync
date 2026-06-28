@@ -1,53 +1,55 @@
-# 安装与部署指南
+# Installation & Deployment Guide
 
-## 前置要求
+English | [简体中文](./INSTALL.zh-CN.md)
 
-在开始之前，请确保你的服务器或本地环境已安装以下软件：
+## Prerequisites
+
+Before you begin, make sure the following software is installed on your server or local environment:
 
 - **Docker** & **Docker Compose**
-- **MySQL** (可选，如果配置为 sqlite 则不需要)
-- **Redis** (可选，如果配置为内存缓存则不需要)
+- **MySQL** (optional, not required if configured to use SQLite)
+- **Redis** (optional, not required if configured to use in-memory caching)
 
 ---
 
-## 1. 配置文件
+## 1. Configuration File
 
-在启动服务前，需要正确配置 `config/config.yaml` 文件。
+Before starting the service, you need to properly configure the `config/config.yaml` file.
 
-### 基础配置
+### Basic Configuration
 
-找到项目根目录下的 `config/config.yaml`，根据你的实际环境修改以下核心项：
+Locate `config/config.yaml` in the project root and modify the following core items according to your actual environment:
 
 ```yaml
 server:
   host: 0.0.0.0
-  port: 5678 # 服务监听端口
-  mode: release # 生产环境建议设置为 release 开发环境可设置为 development
+  port: 5678 # Service listening port
+  mode: release # Use 'release' for production; 'development' for development
   jwt_secret:
-    "" # 请修改为至少32位的随机字符串 用于 JWT 签名 可以用下面的命令生成：
+    "" # Set to a random string of at least 32 characters, used for JWT signing. Generate one with:
     # openssl rand -hex 16
-  jwt_expire_hours: 24 # JWT 过期时间，单位小时
+  jwt_expire_hours: 24 # JWT expiration time, in hours
 
-# 缓存设置
+# Cache settings
 cache:
-  type: redis # 推荐使用 'redis'，测试可用 'memory'
-  addr: 127.0.0.1:6379 # Redis 地址
-  password: "" # Redis 密码
+  type: redis # 'redis' is recommended; use 'memory' for testing
+  addr: 127.0.0.1:6379 # Redis address
+  password: "" # Redis password
   db: 0
 
-# 数据库设置
+# Database settings
 database:
-  driver: mysql # 可选 'mysql' 或 'sqlite'
-  host: 127.0.0.1 # 数据库 IP
+  driver: mysql # 'mysql' or 'sqlite'
+  host: 127.0.0.1 # Database IP
   port: 3306
-  user: root # 数据库用户名
-  password: your_password # 数据库密码
-  name: epg_hub # 数据库名 或者 /config/epg_hub.db (sqlite)
+  user: root # Database username
+  password: your_password # Database password
+  name: epg_hub # Database name, or /config/epg_hub.db (sqlite)
 ```
 
-### 渠道源配置
+### Provider Source Configuration
 
-在 `providers` 部分，你可以启用或禁用特定的抓取源，同时你可以实现并添加自定义源。以下是一个启用央视频源的示例：
+In the `providers` section, you can enable or disable specific scraping sources, and you can also implement and add custom sources. The following is an example of enabling the Yangshipin source:
 
 ```yaml
 providers:
@@ -55,39 +57,39 @@ providers:
     id: ysp
     base_url: https://capi.yangshipin.cn
     enabled: true
-    priority: 2 # 优先级，数值越小优先级越高
+    priority: 2 # Priority; lower values have higher priority
     timeout: 10s
-    rate_limit: 10 # 最大同时请求数
-    max_retries: 3 # 最大重试次数
+    rate_limit: 10 # Maximum concurrent requests
+    max_retries: 3 # Maximum number of retries
 ```
 
-## 2. 数据库初始化
+## 2. Database Initialization
 
-在首次运行前，如果配置文件中选择了 MySQL 作为数据库驱动，则需要初始化数据库结构。选择 sqlite 则跳过此步骤。
+Before the first run, if MySQL is selected as the database driver in the configuration file, you need to initialize the database schema. Skip this step if you chose SQLite.
 
-1. 创建数据库：
+1. Create the database:
 
-项目提供了 SQL 初始化脚本。请登录你的 MySQL 数据库，创建一个名为 epg_sync (或你配置文件中指定的名称) 的数据库，并导入表结构。
+The project provides a SQL initialization script. Log in to your MySQL database, create a database named epg_sync (or the name specified in your configuration file), and import the table schema.
 
 ```sql
 CREATE DATABASE epg_sync DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
-2. 导入数据： 使用项目目录下的 config/epg_sync.sql 文件进行导入。
+2. Import the data: use the config/epg_sync.sql file in the project directory.
 
 ```bash
 mysql -u root -p epg_sync < config/epg_sync.sql
 ```
 
-## 3. 使用 Docker 部署 (推荐)
+## 3. Deploy with Docker (Recommended)
 
-### 步骤 1：检查 Docker Compose 文件
+### Step 1: Check the Docker Compose File
 
-打开项目根目录下的 docker-compose.yml，确保卷挂载和端口映射正确。
+Open docker-compose.yml in the project root and make sure the volume mounts and port mappings are correct.
 
-注意端口映射： 配置文件 config.yaml 中默认服务端口为 5678。如果你的 docker-compose.yml 映射的是 3000:3000，请确保两者一致，或者修改映射关系。
+Note on port mapping: the default service port in config.yaml is 5678. If your docker-compose.yml maps 3000:3000, make sure both are consistent, or modify the mapping.
 
-建议修改 docker-compose.yml 如下以匹配默认配置：
+It is recommended to modify docker-compose.yml as follows to match the default configuration:
 
 ```yaml
 services:
@@ -97,49 +99,49 @@ services:
     container_name: epg-sync
     restart: always
     ports:
-      - "5678:5678" # 左边是宿主机端口，右边是容器内端口(需与 config.yaml 一致)
+      - "5678:5678" # Left is the host port, right is the container port (must match config.yaml)
     volumes:
-      - ./config:/config # 挂载配置文件目录
-      - ./logs:/logs # 挂载日志目录
+      - ./config:/config # Mount the configuration directory
+      - ./logs:/logs # Mount the logs directory
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
 ```
 
-### 步骤 2：启动服务
+### Step 2: Start the Service
 
-在项目根目录下执行：
+Run the following in the project root:
 
 ```bash
 docker-compose up -d --build
 ```
 
-查看日志确认运行状态：
+Check the logs to confirm the running status:
 
 ```bash
 docker-compose logs -f
 ```
 
-## 4. 手动编译运行
+## 4. Build and Run Manually
 
-如果你想在本地进行开发或不使用 Docker：
+If you want to develop locally or do not want to use Docker:
 
-### 后端 (Go)
+### Backend (Go)
 
-1. 确保 Go 环境 (Go 1.20+) 已安装。
+1. Make sure the Go environment (Go 1.20+) is installed.
 
-2. 进入项目根目录。
+2. Enter the project root directory.
 
-3. 运行服务：
+3. Run the service:
 
 ```bash
 go run cmd/server/main.go
 ```
 
-### 前端 (Next.js)
+### Frontend (Next.js)
 
-1. 确保 Node.js 和包管理器 (npm/yarn/pnpm) 已安装。
+1. Make sure Node.js and a package manager (npm/yarn/pnpm) are installed.
 
-2. 进入 web 目录,安装依赖,并启动服务器：
+2. Enter the web directory, install dependencies, and start the server:
 
 ```bash
 cd web
@@ -147,30 +149,30 @@ pnpm install
 pnpm run dev
 ```
 
-## 5. 访问管理面板
+## 5. Access the Management Panel
 
-默认情况下，EPG Sync 的 Web 管理面板运行在 3000 端口。打开浏览器，访问：
-
-```
-http://<服务器IP>:3000
-```
-
-登录用户名是 `admin`，初始密码会在启动日志中生成 ，请查看日志获取。首次登录后建议立即修改密码。
-
-你可以在登录后管理节目频道、查看节目单、同步节目单等操作。
-
-## 6. 获取节目单接口
-
-EPG Sync 支持 XMLTV 格式 和 DIYP 格式。你可以通过以下 URL 获取节目单：
-
-XMLTV 格式：
+By default, the EPG Sync web management panel runs on port 3000. Open your browser and visit:
 
 ```
-http://<服务器IP>:<端口>/api/xmltv
+http://<server-IP>:3000
 ```
 
-DIYP 格式：
+The login username is `admin`, and the initial password is generated in the startup logs — check the logs to obtain it. It is recommended to change the password immediately after the first login.
+
+After logging in, you can manage program channels, view the program guide, sync the program guide, and more.
+
+## 6. Program Guide API Endpoints
+
+EPG Sync supports both XMLTV and DIYP formats. You can obtain the program guide via the following URLs:
+
+XMLTV format:
 
 ```
-http://<服务器IP>:<端口>/api/diyp
+http://<server-IP>:<port>/api/xmltv
+```
+
+DIYP format:
+
+```
+http://<server-IP>:<port>/api/diyp
 ```

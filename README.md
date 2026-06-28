@@ -1,33 +1,35 @@
-# EPG Sync - 电子节目单聚合管理系统
+# EPG Sync - Electronic Program Guide Aggregation & Management System
 
-**EPG Sync** 是一个基于 Golang 和 Next.js 构建的高性能 EPG 同步与管理系统。它能够从多个主流电视节目源自动抓取、聚合节目单数据，并提供友好的 Web 界面进行频道和节目管理。
+English | [简体中文](./README.zh-CN.md)
 
-## 主要功能
+**EPG Sync** is a high-performance EPG synchronization and management system built with Golang and Next.js. It automatically fetches and aggregates program guide data from multiple mainstream TV program sources, and provides a friendly web interface for channel and program management.
 
-- 支持多种节目单格式输出，包括 XMLTV 和 DIYP。
-- **节目单聚合**：自动抓取并合并多个来源的 EPG 数据，生成统一的节目单。
-- **多源支持**：内置支持多种主流 EPG 来源，支持优先级配置与自动故障转移。
-  - 央视频 (YSP)
-  - CCTV 官网
-  - 咪咕视频 (Migu)
-  - 凤凰卫视
-  - 看看新闻 (KKNews)
-  - 齐鲁网 (IQilu)
-  - 荔枝新闻 (JSTV)
-  - 其他地方台源 (苏州、海南、山西、厦门等)
-- **Web 管理面板**：基于 Next.js 16 和 React 19 构建的现代化仪表盘。
-  - 频道管理与自定义
-  - EPG 来源映射配置
-  - 同步状态监控
-  - 节目单预览与查询
-- **自动化同步**：后台定时任务自动更新 EPG 数据。
-- **高性能缓存**：支持 Redis 和内存缓存，提高数据响应速度。
-- **灵活部署**：支持 Docker 容器化部署。
+## Features
 
-## 🚀 快速开始
+- Supports multiple program guide output formats, including XMLTV and DIYP.
+- **Program Guide Aggregation**: Automatically fetches and merges EPG data from multiple sources to generate a unified program guide.
+- **Multi-source Support**: Built-in support for multiple mainstream EPG sources, with priority configuration and automatic failover.
+  - Yangshipin (YSP)
+  - CCTV official website
+  - Migu Video (Migu)
+  - Phoenix TV
+  - KKNews
+  - IQilu
+  - JSTV
+  - Other local TV sources (Suzhou, Hainan, Shanxi, Xiamen, etc.)
+- **Web Management Panel**: A modern dashboard built with Next.js 16 and React 19.
+  - Channel management and customization
+  - EPG source mapping configuration
+  - Sync status monitoring
+  - Program guide preview and query
+- **Automated Sync**: Background scheduled tasks automatically update EPG data.
+- **High-performance Caching**: Supports Redis and in-memory caching to improve data response speed.
+- **Flexible Deployment**: Supports containerized deployment via Docker.
 
-请参阅 [安装教程 (INSTALL.md)](./INSTALL.md) 进行部署和配置。
+## 🚀 Quick Start
+
+Please refer to the [Installation Guide (INSTALL.md)](./INSTALL.md) for deployment and configuration.
 
 ## LICENSE
 
-本项目采用 GNU GENERAL PUBLIC LICENSE，详情请参阅 [LICENSE](./LICENSE) 文件。
+This project is licensed under the GNU GENERAL PUBLIC LICENSE. See the [LICENSE](./LICENSE) file for details.
