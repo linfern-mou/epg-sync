@@ -35,13 +35,13 @@ export default function DashboardLayout({
 
   useEffect(() => {
     if (isHydrated && !user) {
-      router.push('/login');
+      router.push('/login/');
     }
   }, [user, router, isHydrated]);
 
   const handleLogout = () => {
     logout();
-    router.push('/login');
+    router.push('/login/');
   };
 
   if (!isHydrated) {

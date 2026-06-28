@@ -10,9 +10,9 @@ export default function HomePage() {
 
   useEffect(() => {
     if (user) {
-      router.push('/channels');
+      router.push('/channels/');
     } else {
-      router.push('/login');
+      router.push('/login/');
     }
   }, [user, router]);
 
